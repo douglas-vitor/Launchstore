@@ -3,8 +3,15 @@ const { formatPrice, date } = require("../../lib/utils")
 const Category = require("../models/Category")
 const Product = require("../models/Product")
 const File = require("../models/File")
+const db = require("../../config/db")
 
 module.exports = {
+    all() {
+        return db.query(`
+            SELECT * FROM products 
+            ORDER BY update_at DESC
+        `)
+    },
     create(req, res) {
         Category.all().then(function(results) {
             const categories = results.rows
