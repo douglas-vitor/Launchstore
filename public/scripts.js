@@ -10,6 +10,45 @@ const Mask = {
             style: 'currency',
             currency: 'BRL'
         }).format(value / 100)
+    },
+    cpfcnpj(value) {
+        value = value.replace(/\D/g, "")
+
+        if(value.length > 14) {
+            value = value.slice(0, -1)
+        }
+
+        //check if cnpj - 11.222.333/0001-11
+        if(value.length > 11) {
+            // 11.222333444455
+            value = value.replace(/(\d{2})(\d)/, "$1.$2")
+            // 11.222.333444455
+            value = value.replace(/(\d{3})(\d)/, "$1.$2")
+            // 11.222.333/444455
+            value = value.replace(/(\d{3})(\d)/, "$1/$2")
+            // 11.222.333/4444-55
+            value = value.replace(/(\d{4})(\d)/, "$1-$2")
+        } else {
+            //cpf - 111.222.333-44
+            // 111.22233344
+            value = value.replace(/(\d{3})(\d)/, "$1.$2")
+            // 111.222.33344
+            value = value.replace(/(\d{3})(\d)/, "$1.$2")
+            // 111.222.333-44
+            value = value.replace(/(\d{3})(\d)/, "$1-$2")
+        }
+
+        return value
+    },
+    cep(value) {
+        value = value.replace(/\D/g, "")
+        if(value.length > 8) {
+            value = value.slice(0, -1)
+        }
+
+        value = value.replace(/(\d{5})(\d)/, "$1-$2")
+
+        return value
     }
 }
 
@@ -142,4 +181,23 @@ const Lightbox = {
         Lightbox.target.style.bottom = "initial"
         Lightbox.closeButton.style.top = "-80px"
     }
+}
+
+const Validate = {
+    apply(input, func) {
+       let results = Validate[func](input.value) 
+       input.value = results.value
+
+       if(results.error) {
+           alert("Email inválido.")
+       }
+    },
+    isEmail(value) {
+        let error = null
+        return {
+            error,
+            value
+        }
+    }
+    
 }
