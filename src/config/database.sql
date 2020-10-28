@@ -47,6 +47,11 @@ CREATE TABLE "users" (
     "updated_at" timestamp DEFAULT (now())
 );
 
+-- token password recovery
+ALTER TABLE "users" ADD column reset_token text;
+ALTER TABLE "users" ADD column reset_token_expires text;
+
+
 -- foreign key
 ALTER TABLE "products" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 
