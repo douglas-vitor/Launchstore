@@ -34,20 +34,20 @@ module.exports = {
             ) VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING id
         `
-        
-        const passwordHash = await hash(data.password, 8)
-        
-        const values = [
-            data.name,
-            data.email,
-            passwordHash,
-            data.cpf_cnpj.replace(/\D/g, ""),
-            data.cep.replace(/\D/g, ""),
-            data.address
-        ]
 
-        const results = await db.query(query, values)
-        return results.rows[0].id
+            const passwordHash = await hash(data.password, 8)
+
+            const values = [
+                data.name,
+                data.email,
+                passwordHash,
+                data.cpf_cnpj.replace(/\D/g, ""),
+                data.cep.replace(/\D/g, ""),
+                data.address
+            ]
+
+            const results = await db.query(query, values)
+            return results.rows[0].id
         } catch (err) {
             console.log(err)
         }
@@ -56,7 +56,7 @@ module.exports = {
         let query = "UPDATE users SET"
 
         Object.keys(fields).map((key, index, array) => {
-            if((index + 1) < array.length) {
+            if ((index + 1) < array.length) {
                 query = `${query} 
                 ${key} = '${fields[key]}',
                 `
@@ -73,11 +73,11 @@ module.exports = {
     },
     async delete(id) {
         //pegar todos os produtos
-        let results = await Product.all()
+        let results = await db.query("SELECT * FROM products WHERE user_id = $1", [id])
         const products = results.rows
 
         //pegar todas as imagens
-        const allFilesPromise = products.map(product => 
+        const allFilesPromise = products.map(product =>
             Product.files(product.id))
         let promiseResults = await Promise.all(allFilesPromise)
 
@@ -86,7 +86,13 @@ module.exports = {
 
         //remover as imagens da pasta public
         promiseResults.map(results => {
-            results.rows.map(file => fs.unlinkSync(file.path))
+            results.rows.map(file => {
+                try {
+                    fs.unlinkSync(file.path)
+                } catch (err) {
+                    console.log(err)
+                }
+            })
         })
     }
 }
