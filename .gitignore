@@ -1,3 +1,2 @@
-src/lib/*.js
 node_modules/
 src/lib/mailer.js
