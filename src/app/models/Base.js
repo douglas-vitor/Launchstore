@@ -3,6 +3,7 @@ const db = require("../../config/db")
 function find(filters, table) {
     let query = `SELECT * FROM ${table}`
 
+    if (filters) {
         Object.keys(filters).map(key => {
             // WHERE | OR | AND
             query += `${key}`
@@ -11,8 +12,9 @@ function find(filters, table) {
                 query += `${field} = '${filters[key][field]}'`
             })
         })
+    }
 
-        return db.query(query)
+    return db.query(query)
 }
 
 const Base = {
@@ -23,7 +25,7 @@ const Base = {
         return this
     },
     async find(id) {
-        const results = await find({ where: {id} }, this.table)
+        const results = await find({ where: { id } }, this.table)
         return results.rows[0]
     },
     async findOne(filters) {
@@ -57,7 +59,7 @@ const Base = {
         try {
             const update = []
 
-            Object.keys(fields).map( key => {
+            Object.keys(fields).map(key => {
                 const line = `${key} = '${fields[key]}'`
                 update.push(line)
             })
