@@ -13,7 +13,6 @@ module.exports = {
         return results.rows
     },
     async search({filter, category}) {
-//        const {filter, category} = params
         
         let query = `
         SELECT products.*, 
