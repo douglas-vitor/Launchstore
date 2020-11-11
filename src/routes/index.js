@@ -18,6 +18,8 @@ routes.get("/ads/create", function(req, res) {
 routes.get("/accounts", function(req, res) {
     return res.redirect("/users/login")
 })
-
+routes.get("/teste", function(req, res) {
+    return res.render("orders/error")
+})
 
 module.exports = routes
