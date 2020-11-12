@@ -99,8 +99,7 @@ header div.container a {
 }
 
 /* header search */
-
-.searh input {
+.search input {
     width: 100%;
     padding: 8px 16px;
     border-radius: 2px;

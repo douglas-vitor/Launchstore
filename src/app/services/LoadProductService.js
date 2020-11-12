@@ -3,32 +3,43 @@ const Product = require("../models/Product")
 const { formatPrice, date } = require("../../lib/utils")
 
 async function getImages(productId) {
-    let files = await Product.files(productId)
-    files = files.map(file => ({
-        ...file,
-        src: `${file.path.replace("public", "").replace("\\", "\/").replace("\\", "\/")}`,
-    })
-    )
+    try {
+        let files = await Product.files(productId)
+        files = files.map(file => ({
+            ...file,
+            src: `${file.path.replace("public", "").replace("\\", "\/").replace("\\", "\/")}`,
+        })
+        )
+        if(!files.src) { files.src = '//placehold.it/500x360'}
+        return files
+    } catch (err) {
+        console.log(err)
+    }
 
-    return files
 }
 
 async function format(product) {
-    const files = await getImages(product.id)
-    product.img = files[0].src
-    product.files = files
-    product.formatedOldPrice = formatPrice(product.old_price)
-    product.formatedPrice = formatPrice(product.price)
-
-    const { day, hour, minutes, month } = date(product.updated_at)
-
-    product.published = {
-        day: `${day}/${month}`,
-        hour: `${hour}h${minutes}`,
+    try {
+        const files = await getImages(product.id)
+        product.img = files[0].src
+        product.files = files
+        product.formatedOldPrice = formatPrice(product.old_price)
+        product.formatedPrice = formatPrice(product.price)
+    
+        const { day, hour, minutes, month } = date(product.updated_at)
+    
+        product.published = {
+            day: `${day}/${month}`,
+            hour: `${hour}h${minutes}`,
+        }
+    
+        return product
+    
+    } catch (err) {
+        console.error(err)
     }
-
-    return product
 }
+
 const LoadService = {
     load(service, filter) {
         this.filter = filter

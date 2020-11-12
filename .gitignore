@@ -1,2 +1,4 @@
+.vscode/
 node_modules/
+public/images/
 src/lib/mailer.js
