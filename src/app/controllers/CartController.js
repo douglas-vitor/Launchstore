@@ -1,4 +1,4 @@
-const { addOne } = require("../../lib/cart")
+const { addOne, removeOne } = require("../../lib/cart")
 const Cart = require("../../lib/cart")
 
 const LoadProductService = require("../services/LoadProductService")
@@ -32,6 +32,24 @@ module.exports = {
         req.session.cart = cart
 
         // redirecionar usuario para tela do carrinho
+        return res.redirect("/cart")
+    },
+    removeOne(req, res) {
+        // pegar id do produto
+        let { id } = req.params
+        // primeiro pegar carrinho da sessão
+        let { cart } = req.session
+
+        // se nao tiver carrinho, retornar
+        if (!cart) return res.redirect("/cart")
+
+        // iniciar carrinho (gerenciador de carinho) e remover
+        cart = Cart.init(cart).removeOne(id)
+
+        // atualizar carrinho da sessao, removendo 1 item
+        req.session.cart = cart
+
+        // redirecionamento para pagina cart
         return res.redirect("/cart")
     }
 }
